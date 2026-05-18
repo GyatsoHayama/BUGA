@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <base href="../">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUGA</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .poi-container {
+            margin: 1rem auto;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        #poi-iframe {
+            width: 100%;
+            min-height: 75vh;
+            height: 90vh;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .iframe-fallback {
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .iframe-fallback a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .iframe-fallback a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-group">
+                <div class="logo">
+                    <!-- Logo der Stadt Wuppertal -->
+                    <img src="img/Logo_wuppertal.png" alt="Logo">
+                </div>
+                <div class="logo">
+                    <h1><span>Bundesgartenschau</span> <span>Wuppertal</span></h1>
+                </div>
+            </div>
+            <div class="dropdown" id="mainDropdown">
+    <button class="dropdown-button">Menü</button>
+    <div class="dropdown-menu">
+        <div class="menu-section">
+            <h3 class="menu-title">A-Frame</h3>
+            <a href="A-Frame/index.html">Index</a>
+            <a href="A-Frame/Beispiel1.html">Beispiel 1</a>
+            <a href="A-Frame/Beispiel2.html">Beispiel 2</a>
+            <h3 class="menu-title">POI´s</h3>
+            <a href="POI/POI.index.html">POI</a>
+            <h3 class="menu-title">Protokolle</h3>
+            <a href="Sitzungsprotokolle/Protokoll.html">Sitzungs protokolle</a>
+        </div>
+    </div>
+</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>POI´s</h1>
+            <p>Die AR-/Kartenansicht wird hier aus der referenzierten Datei geladen.</p>
+        </section>
+
+        <div class="poi-container">
+            <iframe id="poi-iframe" src="POI.html" title="POI AR-Ansicht" allow="camera; geolocation; microphone; autoplay; fullscreen" loading="lazy"></iframe>
+            <p class="iframe-fallback">Dein Browser unterstützt kein eingebettetes POI-Layout. Öffne stattdessen <a href="POI.html">POI.html</a>.</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <a href="index.html">Startseite</a>
+            <a href="ueber-uns.html">Über uns</a>
+            <a href="impressum.html">Impressum</a>
+        </div>
+    </footer>
+
+    <script src="scripts/dropdown.js"></script>
+</body>
+</html>

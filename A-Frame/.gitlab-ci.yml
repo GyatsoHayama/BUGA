@@ -1,0 +1,13 @@
+pages:
+  stage: deploy
+
+  script:
+    - mkdir public
+    - cp -r a-frame-Beispiele/* public/
+
+  artifacts:
+    paths:
+      - public
+
+  only:
+    - main

@@ -1,0 +1,49 @@
+﻿<!doctype HTML>
+<!-- Ref.: https://medium.com/@fauziali/creating-web-based-augmented-reality-with-just-10-lines-of-html-code-for-beginners-ar-js-d62ef596eab -->
+<html>
+
+<!--Hinweis: Die Preset-Marker Hiro und Kanji werden benoetigt-->
+
+<head>
+  <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
+  <script src="https://raw.githack.com/jeromeetienne/AR.js/2.0.5/aframe/build/aframe-ar.js"></script>
+</head>
+
+<body style='margin: 0px; overflow: scroll;'>
+
+  <a-scene embedded arjs>
+    <a-marker preset='hiro'> <!--Marker-Preset 1-->
+      <a-entity position="0 0.5 0" rotation="-90 0 0">
+
+        <a-plane width="2" height="0.5" color="black">
+        </a-plane>
+
+        <a-text value="This text will be 2 units wide" color="white" align="center" width="2" position="0 0 0.1">
+        </a-text>
+      </a-entity>
+
+    </a-marker>
+
+    <a-marker preset='kanji'> <!--Marker-Preset 2-->
+      <a-box position='0 0.5 0' rotation='-90 0 0' material='color: blue;side: double'></a-box>
+      <a-entity position='-0.35 0.5 -0.65' rotation="0 45 0" geometry="primitive: plane" width="1.0" height="1"
+        material="color:red;side: double"></a-entity> <!--side:double noetig, damit Strukturen nicht durchsichtig erscheinen-->
+      <a-entity position='0.35 0.5 -0.65' rotation="0 -45 0" geometry="primitive: plane" width="1.0" height="1"
+        material="color:red;side: double"></a-entity>
+      <a-entity geometry="primitive:triangle;vertexA:-0.5 1 -0.5; vertexB:0.5 1 -0.5; vertexC:0 1 -1;"
+        material="color:blue;side: double"></a-entity>
+      <a-entity position='0.1 1.05 0.25' rotation="-90 0 0" geometry="primitive:plane; width:0.2; height:0.5;"
+        material="color:red;side: double"></a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity> <!--definiert die Kamera der Szene-->
+  </a-scene>
+
+
+</body>
+
+</html>
+
+
+
+
