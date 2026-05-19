@@ -41,11 +41,9 @@
         </div>
     </header>
 
-    <!-- Inhalt wird hier geladen -->
+    <!-- Hier wird der Inhalt eingefügt -->
     <main id="content">
-
         <p>Inhalt wird geladen...</p>
-
     </main>
 
     <footer>
@@ -64,6 +62,7 @@
                 if (!response.ok) {
                     throw new Error('Datei konnte nicht geladen werden');
                 }
+
                 return response.text();
             })
             .then(html => {
@@ -72,17 +71,41 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
 
-                // Nur den Inhalt von <main> übernehmen
-                const mainContent = doc.querySelector('main');
+                // Alles aus dem Body holen
+                const bodyChildren = [...doc.body.children];
 
-                if (mainContent) {
-                    document.getElementById('content').innerHTML = mainContent.innerHTML;
-                } else {
-                    document.getElementById('content').innerHTML =
-                        '<p>Kein Main-Inhalt gefunden.</p>';
-                }
+                // Container leeren
+                const content = document.getElementById('content');
+                content.innerHTML = '';
+
+                bodyChildren.forEach(element => {
+
+                    // Unerwünschte Elemente überspringen
+                    if (
+                        element.tagName === 'SCRIPT' ||
+                        element.tagName === 'STYLE'
+                    ) {
+                        return;
+                    }
+
+                    // Element kopieren
+                    content.appendChild(element.cloneNode(true));
+                });
+
+                // Externe Scripts aus index.html manuell laden
+                const scripts = doc.querySelectorAll('script[src]');
+
+                scripts.forEach(oldScript => {
+
+                    const newScript = document.createElement('script');
+
+                    newScript.src = oldScript.src;
+
+                    document.body.appendChild(newScript);
+                });
             })
             .catch(error => {
+
                 console.error('Fehler beim Laden:', error);
 
                 document.getElementById('content').innerHTML =
