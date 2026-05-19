@@ -8,9 +8,12 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.6;
     color: #333;
-    display: flex;
-    flex-direction: column;
     min-height: 100vh;
+    width: 100%;
+}
+
+html {
+    width: 100%;
 }
 
 header {
@@ -82,11 +85,11 @@ header {
 
 .dropdown-button::before {
     content: '';
-    width: 24px;
-    height: 3px;
+    width: 48px;
+    height: 4px;
     background: white;
     border-radius: 2px;
-    box-shadow: 0 10px 0 white, 0 -10px 0 white;
+    box-shadow: 0 12px 0 white, 0 -12px 0 white;
     display: inline-block;
 }
 
@@ -152,6 +155,14 @@ main {
     flex: 1;
 }
 
+main img,
+.hero img,
+section img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 footer {
     background-color: #DD1DC4;
     color: white;
@@ -161,17 +172,20 @@ footer {
 
 @media (max-width: 768px) {
     body {
-        padding-bottom: 100px;
+        padding-bottom: 0;
     }
 
     header {
-        position: sticky;
+        position: fixed;
         top: 0;
-        z-index: 100;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: #fff;
     }
 
     .header-container {
-        padding: 10px 16px;
+        padding: 12px 16px;
     }
 
     .logo-group {
@@ -188,8 +202,17 @@ footer {
     }
 
     main {
-        margin: 20px auto 20px;
+        margin: 110px auto 104px;
         padding: 0 16px;
+        min-height: calc(100vh - 174px);
+    }
+
+    .hero {
+        padding: 24px 0 16px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
     }
 
     footer {
