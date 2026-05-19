@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+function initDropdown() {
     const dropdown = document.getElementById('mainDropdown');
     if (!dropdown) return;
 
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function toggleMenu(event) {
         event.stopPropagation();
+
         if (dropdown.classList.contains('open')) {
             closeMenu();
         } else {
@@ -37,4 +38,4 @@ document.addEventListener('DOMContentLoaded', function () {
     dropdown.addEventListener('click', function (event) {
         event.stopPropagation();
     });
-});
+}

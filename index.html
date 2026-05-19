@@ -5,8 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/style.css">
 
-        <script src="scripts/dropdown.js"></script>
-
         <title>BUGA</title>
     </head>
 
@@ -49,7 +47,17 @@
             </div>
         </footer>
 
-        
+        <script src="scripts/dropdown.js"></script>
+
+        <script>
+            fetch('includes/dropdown.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('dropdown-menu').innerHTML = data;
+
+            initDropdown();
+            });
+        </script>
 
     </body>
 
