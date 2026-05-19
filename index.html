@@ -1,54 +1,62 @@
 ﻿<!DOCTYPE html>
 <html lang="de">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="css/style.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
 
-        <title>BUGA</title>
-    </head>
+    <title>BUGA</title>
+</head>
 
-    <body>
-        <header>
-            <div class="header-container">
-                <div class="logo-group">
-                    <div class="logo">
-                        <!-- Logo der Stadt Wuppertal -->
-                        <img src="img/Logo_Wuppertal.jpg" alt="Logo">
-                    </div>
-                    <div class="logo">
-                        <h1><span>Bundesgartenschau</span> <span>Wuppertal</span></h1>
-                    </div>
+<body>
+
+    <header>
+        <div class="header-container">
+
+            <div class="logo-group">
+
+                <div class="logo">
+                    <img src="img/Logo_Wuppertal.jpg" alt="Logo">
                 </div>
-                <div id="dropdown-menu"></div>
-                <script>
-                    fetch('includes/dropdown.html')
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('dropdown-menu').innerHTML = data;
-                    });
-                </script>
+
+                <div class="logo">
+                    <h1>
+                        <span>Bundesgartenschau</span>
+                        <span>Wuppertal</span>
+                    </h1>
+                </div>
+
             </div>
-        </header>
 
-        <main>
-            <section class="hero">
-                <h1>Bundesgartenschau Wuppertal</h1>
-            </section>
+            <!-- Dropdown wird hier geladen -->
+            <div id="dropdown-menu"></div>
 
-            <img src="img/Buga_Karte.jpg" alt="BUGA Karte" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-        </main>
+        </div>
+    </header>
 
-        <footer>
-            <div class="footer-container">
-                <a href="index.html">Startseite</a>
-                <a href="ueber-uns.html">Über uns</a>
-                <a href="impressum.html">Impressum</a>
-            </div>
-        </footer>
+    <main>
 
-        <script src="scripts/dropdown.js"></script>
+        <section class="hero">
+            <h1>Bundesgartenschau Wuppertal</h1>
+        </section>
 
-    </body>
+        <img
+            src="img/Buga_Karte.jpg"
+            alt="BUGA Karte"
+            style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
+        >
 
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <a href="index.html">Startseite</a>
+            <a href="ueber-uns.html">Über uns</a>
+            <a href="impressum.html">Impressum</a>
+        </div>
+    </footer>
+
+    <script src="scripts/dropdown.js"></script>
+
+</body>
 </html>
