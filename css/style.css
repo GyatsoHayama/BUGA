@@ -16,34 +16,36 @@ body {
 header {
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 0 20px;
+    width: 100%;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .logo-group {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
 }
 
 .logo {
-    font-size:22px;
+    font-size: 22px;
     font-weight: bold;
     color: #000000;
 }
 
 .logo h1 {
     display: flex;
-    flex-wrap: wrap;
-    height: 10px;
-    line-height: 40px;
+    flex-direction: column;
     margin: 0;
-    padding-top: 0px;
+    line-height: 1.1;
 }
 
 .logo img {
@@ -53,27 +55,39 @@ header {
 
 .dropdown {
     position: relative;
-    display: inline-block;
+    margin-left: auto;
 }
 
 .dropdown-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
+    background-color: #000000;
     border: none;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 16px;
     transition: background-color 0.3s;
+    width: 80px;
+    height: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    color: transparent;
+    text-indent: -9999px;
+    padding: 0;
 }
 
 .dropdown-button:hover {
-    background-color: #0056b3;
+    background-color: #222222;
 }
 
-.dropdown-button::after {
-    content: ' ▼';
-    font-size: 12px;
+.dropdown-button::before {
+    content: '';
+    width: 24px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    box-shadow: 0 10px 0 white, 0 -10px 0 white;
+    display: inline-block;
 }
 
 .dropdown-menu {
@@ -143,6 +157,53 @@ footer {
     color: white;
     padding: 20px;
     text-align: center;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 100px;
+    }
+
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .header-container {
+        padding: 10px 16px;
+    }
+
+    .logo-group {
+        gap: 8px;
+    }
+
+    .logo img {
+        height: 60px;
+    }
+
+    .dropdown-button {
+        width: 64px;
+        height: 64px;
+    }
+
+    main {
+        margin: 20px auto 20px;
+        padding: 0 16px;
+    }
+
+    footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 14px 16px;
+    }
+
+    .footer-container {
+        justify-content: center;
+    }
 }
 
 .footer-container {
