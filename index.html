@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="css/style.css">
 
         <title>BUGA</title>
     </head>
@@ -11,7 +11,6 @@
     <body>
         <header>
             <div class="header-container">
-
                 <div class="logo-group">
                     <div class="logo">
                         <!-- Logo der Stadt Wuppertal -->
@@ -21,25 +20,14 @@
                         <h1><span>Bundesgartenschau</span> <span>Wuppertal</span></h1>
                     </div>
                 </div>
-                
-                <div class="dropdown" id="mainDropdown">
-                    <button class="dropdown-button">Menü</button>
-                        <div class="dropdown-menu">
-                        <div class="menu-section">
-                            <h3 class="menu-title">A-Frame</h3>
-                            <a href="A-Frame/index.html">Index</a>
-                            <a href="A-Frame/Beispiel1.html">Beispiel 1</a>
-                            <a href="A-Frame/Beispiel2.html">Beispiel 2</a>
-                        </div>
-                        <div class="menu-section">
-                            <h3 class="menu-title">POI´s</h3>
-                            <a href="POI/POI.index.html">POI</a>
-                        </div>
-                        <div class="menu-section">
-                            <h3 class="menu-title">Protokolle</h3>
-                            <a href="Sitzungsprotokolle/Protokoll.html">Sitzungs protokolle</a>
-                        </div>
-                    </div>
+                <div id="dropdown-menu"></div>
+                <script>
+                    fetch('includes/dropdown.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('dropdown-menu').innerHTML = data;
+                    });
+                </script>
             </div>
         </header>
 
