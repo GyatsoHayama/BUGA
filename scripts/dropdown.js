@@ -1,4 +1,21 @@
+document.addEventListener('DOMContentLoaded', function () {
+
+    // dropdown.html laden
+    fetch('includes/dropdown.html')
+        .then(response => response.text())
+        .then(data => {
+
+            // HTML einsetzen
+            document.getElementById('dropdown-menu').innerHTML = data;
+
+            // Danach Dropdown aktivieren
+            initDropdown();
+        });
+
+});
+
 function initDropdown() {
+
     const dropdown = document.getElementById('mainDropdown');
     if (!dropdown) return;
 
@@ -7,15 +24,22 @@ function initDropdown() {
 
     function closeMenu() {
         dropdown.classList.remove('open');
-        if (menu) menu.style.display = 'none';
+
+        if (menu) {
+            menu.style.display = 'none';
+        }
     }
 
     function openMenu() {
         dropdown.classList.add('open');
-        if (menu) menu.style.display = 'block';
+
+        if (menu) {
+            menu.style.display = 'block';
+        }
     }
 
     function toggleMenu(event) {
+
         event.stopPropagation();
 
         if (dropdown.classList.contains('open')) {
@@ -30,6 +54,7 @@ function initDropdown() {
     }
 
     document.addEventListener('click', function () {
+
         if (dropdown.classList.contains('open')) {
             closeMenu();
         }
