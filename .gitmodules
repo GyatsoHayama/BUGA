@@ -1,3 +1,6 @@
 [submodule "A-Frame/Marker-App-Bsp"]
 	path = A-Frame/Marker-App-Bsp
 	url = https://github.com/laeck99/Marker-App-Bsp.git
+[submodule "POI"]
+	path = POI
+	url = https://github.com/longcoder207/POI2.git
