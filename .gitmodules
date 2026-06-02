@@ -1,0 +1,3 @@
+[submodule "A-Frame/Marker-App-Bsp"]
+	path = A-Frame/Marker-App-Bsp
+	url = https://github.com/laeck99/Marker-App-Bsp.git
