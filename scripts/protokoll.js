@@ -39,7 +39,9 @@ window.addEventListener('DOMContentLoaded', function () {
 
     async function loadProtocolList() {
         try {
-            const response = await fetch('protocols.json');
+            const currentUrl = window.location.href;
+            const listUrl = new URL('protocols.json', currentUrl).href;
+            const response = await fetch(listUrl);
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
