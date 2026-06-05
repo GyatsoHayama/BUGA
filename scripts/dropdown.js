@@ -53,6 +53,28 @@ function initDropdown() {
         button.addEventListener('click', toggleMenu);
     }
 
+    function setIframeSrc(src) {
+        const iframe = document.getElementById('aframeViewer') || document.querySelector('main iframe');
+        if (iframe) {
+            iframe.src = src;
+            closeMenu();
+        } else {
+            window.location.href = src;
+        }
+    }
+
+    function onDropdownLinkClick(event) {
+        const link = event.target.closest('a[data-iframe]');
+        if (!link) return;
+        event.preventDefault();
+        const src = link.dataset.src;
+        if (src) {
+            setIframeSrc(src);
+        }
+    }
+
+    dropdown.addEventListener('click', onDropdownLinkClick);
+
     document.addEventListener('click', function () {
 
         if (dropdown.classList.contains('open')) {

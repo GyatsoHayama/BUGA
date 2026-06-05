@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
 
-    <title>Skelet Seite</title>
+    <title>Alte HsBo Bsp</title>
 </head>
 
 <body>
@@ -33,7 +33,15 @@
     </header>
 
     <main>
-        <iframe src="A-Frame\index.html" title="Embedded content" style="border:0;width:100%;height:100vh;" frameborder="0" scrolling="auto"></iframe>
+        <div class="main-dropdown" style="padding: 16px; background: #f7f7f7;">
+            <label for="pageSelect" style="font-weight:600; margin-right:8px;">A-Frame auswählen:</label>
+            <select id="pageSelect" style="padding: 8px; font-size: 1rem;">
+                <option value="A-Frame/index.html">Index</option>
+                <option value="A-Frame/Beispiel1.html">Beispiel 1</option>
+                <option value="A-Frame/Beispiel2.html">Beispiel 2</option>
+            </select>
+        </div>
+        <iframe id="aframeViewer" src="A-Frame/index.html" title="Embedded content" style="border:0;width:100%;height:calc(100vh - 64px);" frameborder="0" scrolling="auto"></iframe>
     </main>
 
     <footer>
