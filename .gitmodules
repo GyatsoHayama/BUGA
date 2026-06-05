@@ -4,3 +4,6 @@
 [submodule "Murals/mindar-murals-tour"]
 	path = Murals/mindar-murals-tour
 	url = https://github.com/msewerin/mindar-murals-tour.git
+[submodule "POI/POI2"]
+	path = POI/POI2
+	url = https://github.com/longcoder207/POI2
