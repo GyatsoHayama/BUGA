@@ -12,7 +12,19 @@ document.addEventListener('DOMContentLoaded', function () {
             initDropdown();
         });
 
+    initPageSelect();
+
 });
+
+function initPageSelect() {
+    const select = document.getElementById('pageSelect');
+    const iframe = document.getElementById('aframeViewer');
+    if (!select || !iframe) return;
+
+    select.addEventListener('change', function () {
+        iframe.src = this.value;
+    });
+}
 
 function initDropdown() {
 
