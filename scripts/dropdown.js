@@ -1,20 +1,54 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // dropdown.html laden
-    fetch('includes/dropdown.html')
-        .then(response => response.text())
-        .then(data => {
-
-            // HTML einsetzen
-            document.getElementById('dropdown-menu').innerHTML = data;
-
-            // Danach Dropdown aktivieren
-            initDropdown();
-        });
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    if (dropdownMenu) {
+        const dropdownUrl = new URL('includes/dropdown.html', document.baseURI).href;
+        fetch(dropdownUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Fetch failed: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                dropdownMenu.innerHTML = data;
+                initDropdown();
+            })
+            .catch(error => {
+                console.error('Dropdown load failed:', error);
+                dropdownMenu.innerHTML = getDropdownFallback();
+                initDropdown();
+            });
+    }
 
     initPageSelect();
 
 });
+
+function getDropdownFallback() {
+    return `
+        <div class="dropdown" id="mainDropdown">
+            <button class="dropdown-button" aria-label="Menü">Menü</button>
+            <div class="dropdown-menu">
+                <div class="menu-section">
+                    <h3 class="menu-title">A-Frame</h3>
+                    <a href="A-Frame/skl_index.html">HsBo alte Bsp</a>
+                    <a href="Murals/skl_Murals_Marcel.html">Murals_Marcel</a>
+                    <a href="A-Frame/skl_Marker_L.html">Marker_Laura</a>
+                </div>
+                <div class="menu-section">
+                    <h3 class="menu-title">POI´s</h3>
+                    <a href="POI/skl_POI.html">POI_Dennis</a>
+                </div>
+                <div class="menu-section">
+                    <h3 class="menu-title">Protokolle</h3>
+                    <a href="Sitzungsprotokolle/Protokoll.html">Sitzungs protokolle</a>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
 function initPageSelect() {
     const select = document.getElementById('pageSelect');
