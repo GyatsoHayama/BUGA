@@ -218,7 +218,7 @@ main {
     width: 100%;
     max-width: 1200px;
 
-    margin: 40px auto;
+    margin: 0 auto;
 
     padding: 0 20px;
 }
@@ -246,6 +246,23 @@ section img {
     text-align: center;
 
     padding: 60px 20px;
+}
+
+.map-section {
+    width: 100%;
+    height: min(70vh, 720px);
+    min-height: 420px;
+    overflow: hidden;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    background: #dfe8e5;
+}
+
+.leaflet-container {
+    font: inherit;
 }
 
 .hero h1 {
@@ -393,15 +410,15 @@ footer {
     main {
         width: 100%;
 
-        margin: 90px auto 90px;
+        margin: 72px auto 90px;
 
-        padding: 0 16px;
+        padding: 0;
     }
 
     /* HERO */
 
     .hero {
-        padding: 24px 0;
+        padding: 24px 16px;
     }
 
     .hero h1 {
@@ -412,6 +429,11 @@ footer {
 
     .hero p {
         font-size: 16px;
+    }
+
+    .map-section {
+        height: calc(100vh - 160px);
+        min-height: 420px;
     }
 
     /* FOOTER */
