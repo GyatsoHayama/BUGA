@@ -295,6 +295,7 @@ section img {
     color: #333;
     opacity: 1;
     padding: 16px 38px 14px 16px;
+    position: relative;
 }
 
 .poi-popup .leaflet-popup-close-button {
@@ -311,16 +312,45 @@ section img {
 }
 
 .geolocation-control {
-    margin: 0 0 10px 10px;
+    margin: 0 10px 10px 0;
     padding: 5px 8px;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 3px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
     color: #333;
+    cursor: pointer;
     font-size: 11px;
     line-height: 1.3;
-    pointer-events: none;
+    pointer-events: auto;
+}
+
+.poi-popup-coordinates {
+    display: block;
+    margin-top: 12px;
+    color: #666;
+    font-size: 10px;
+    line-height: 1.2;
+}
+
+.geolocation-control:hover {
+    background: #f3f3f3;
+}
+
+.geolocation-control:focus-visible {
+    outline: 2px solid #1976d2;
+    outline-offset: 1px;
+}
+
+/* Leaflet adds its own button styles to controls; keep this control compact. */
+.leaflet-control .geolocation-control {
+    min-width: 92px;
+    text-align: center;
+}
+
+/* Keep the location point visible above the base tiles. */
+.leaflet-overlay-pane .leaflet-interactive {
+    cursor: pointer;
 }
 
 .poi-popup-name {

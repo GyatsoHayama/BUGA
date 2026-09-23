@@ -24,24 +24,45 @@ document.addEventListener("DOMContentLoaded", () => {
         new ResizeObserver(() => map.invalidateSize()).observe(mapElement);
     }
 
-    const geolocationControl = L.control({ position: "bottomleft" });
+    let currentLocation = null;
+    let currentLocationMarker = null;
+    const geolocationControl = L.control({ position: "bottomright" });
     geolocationControl.onAdd = () => {
-        const element = L.DomUtil.create("div", "geolocation-control");
-        element.textContent = `Koordinaten: ${formatCoordinates(map.getCenter())}`;
+        const element = L.DomUtil.create("button", "geolocation-control");
+        element.type = "button";
+        element.title = "Zum eigenen Standort springen";
+        element.textContent = "● Standort wird ermittelt ...";
+        L.DomEvent.disableClickPropagation(element);
+        element.addEventListener("click", () => {
+            if (currentLocation) {
+                map.setView(currentLocation, Math.max(map.getZoom(), 15));
+            }
+        });
         return element;
     };
     geolocationControl.addTo(map);
 
     map.on("locationfound", (event) => {
+        currentLocation = event.latlng;
         const element = document.querySelector(".geolocation-control");
-        if (!element) return;
+        if (element) element.textContent = `● ${formatCoordinates(event.latlng)}`;
 
-        element.textContent = `GPS: ${formatCoordinates(event.latlng)}`;
+        if (!currentLocationMarker) {
+            currentLocationMarker = L.circleMarker(event.latlng, {
+                radius: 7,
+                color: "#fff",
+                weight: 2,
+                fillColor: "#1976d2",
+                fillOpacity: 1
+            }).addTo(map);
+        } else {
+            currentLocationMarker.setLatLng(event.latlng);
+        }
     });
 
     map.on("locationerror", () => {
         const element = document.querySelector(".geolocation-control");
-        if (element) element.textContent = `Koordinaten: ${formatCoordinates(map.getCenter())}`;
+        if (element) element.textContent = "● Standort nicht verfügbar";
     });
 
     map.locate({ watch: true, enableHighAccuracy: true, setView: false });
@@ -61,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <strong class="poi-popup-name">${escapeHtml(poi.name)}</strong>
                         <p class="poi-popup-description">${escapeHtml(poi.description || "Keine Beschreibung")}</p>
                         <a class="poi-popup-link" href="${escapeHtml(applicationUrl)}">Zur Anwendung</a>
+                        <small class="poi-popup-coordinates">Koordinaten: ${formatCoordinates({ lat: poi.latitude, lng: poi.longitude })}</small>
                     </div>`;
 
                 L.marker([poi.latitude, poi.longitude])
