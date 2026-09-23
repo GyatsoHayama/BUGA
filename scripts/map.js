@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const geolocationControl = L.control({ position: "bottomleft" });
     geolocationControl.onAdd = () => {
         const element = L.DomUtil.create("div", "geolocation-control");
-        element.textContent = "Standort wird ermittelt ...";
+        element.textContent = `Koordinaten: ${formatCoordinates(map.getCenter())}`;
         return element;
     };
     geolocationControl.addTo(map);
@@ -36,12 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const element = document.querySelector(".geolocation-control");
         if (!element) return;
 
-        element.textContent = `Standort: ${event.latlng.lat.toFixed(5)}, ${event.latlng.lng.toFixed(5)}`;
+        element.textContent = `GPS: ${formatCoordinates(event.latlng)}`;
     });
 
     map.on("locationerror", () => {
         const element = document.querySelector(".geolocation-control");
-        if (element) element.textContent = "Standort nicht verfügbar";
+        if (element) element.textContent = `Koordinaten: ${formatCoordinates(map.getCenter())}`;
     });
 
     map.locate({ watch: true, enableHighAccuracy: true, setView: false });
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const applicationUrl = poi.applicationUrl || "POI/POI2/index.html";
                 const popupContent = `
-                    <div class="poi-popup-content" style="background:#ffffff; color:#333333; opacity:1; padding:4px;">
+                    <div class="poi-popup-content" style="background:#ffffff; color:#333333; opacity:1;">
                         <strong class="poi-popup-name">${escapeHtml(poi.name)}</strong>
                         <p class="poi-popup-description">${escapeHtml(poi.description || "Keine Beschreibung")}</p>
                         <a class="poi-popup-link" href="${escapeHtml(applicationUrl)}">Zur Anwendung</a>
@@ -102,4 +102,8 @@ function escapeHtml(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+}
+
+function formatCoordinates(latlng) {
+    return `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
 }
