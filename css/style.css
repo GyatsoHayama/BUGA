@@ -276,6 +276,7 @@ section img {
     background-color: #fff !important;
     color: #333;
     opacity: 1 !important;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4) !important;
 }
 
 .poi-popup .leaflet-popup-tip {
@@ -286,6 +287,12 @@ section img {
 .poi-popup .leaflet-popup-content {
     margin: 14px 16px;
     min-width: 190px;
+    opacity: 1;
+}
+
+.poi-popup-content {
+    background: #fff;
+    color: #333;
     opacity: 1;
 }
 

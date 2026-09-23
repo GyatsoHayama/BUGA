@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const applicationUrl = poi.applicationUrl || "POI/POI2/index.html";
                 const popupContent = `
-                    <div class="poi-popup-content">
+                    <div class="poi-popup-content" style="background:#ffffff; color:#333333; opacity:1; padding:4px;">
                         <strong class="poi-popup-name">${escapeHtml(poi.name)}</strong>
                         <p class="poi-popup-description">${escapeHtml(poi.description || "Keine Beschreibung")}</p>
                         <a class="poi-popup-link" href="${escapeHtml(applicationUrl)}">Zur Anwendung</a>
