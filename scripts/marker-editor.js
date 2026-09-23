@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const applicationSelect = document.getElementById("marker-application");
     const markerUrlInput = document.getElementById("marker-url");
     const websiteLinkSelect = document.getElementById("website-link-select");
+    const saveToProject = document.getElementById("save-to-project");
     const savedList = document.getElementById("saved-marker-list");
     let markerType = "point";
     let selectedPosition = null;
@@ -104,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
             markers.push({ id: `custom-${Date.now()}`, ...markerData });
         }
         localStorage.setItem("bugaMarkers", JSON.stringify(markers));
+        if (saveToProject.checked) downloadProjectMarkers(markers);
         editingMarkerId = null;
         form.reset();
         resetPosition();
@@ -125,6 +127,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function readMarkers() {
         try { return JSON.parse(localStorage.getItem("bugaMarkers") || "[]"); } catch { return []; }
+    }
+
+    function downloadProjectMarkers(markers) {
+        const data = JSON.stringify(markers, null, 2);
+        const blob = new Blob([data], { type: "application/json" });
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = "marker-data.json";
+        link.click();
+        URL.revokeObjectURL(downloadUrl);
+        status.textContent = "Marker gespeichert und als marker-data.json exportiert.";
     }
 
     function renderSavedMarkers() {

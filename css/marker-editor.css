@@ -25,6 +25,8 @@
 #position-button { width: 100%; margin-top: 6px; background: #d7e4d7; color: #173b20; }
 .save-button { width: 100%; margin-top: 10px; }
 .position-status { min-height: 24px; margin-top: 8px; color: #59625c; font-size: 13px; }
+.project-save-option { display: flex !important; align-items: center; gap: 8px; font-weight: 400 !important; }
+.project-save-option input { width: auto !important; margin: 0 !important; }
 .saved-markers ul { padding-left: 20px; }
 .saved-markers li { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0; }
 .saved-marker-label { cursor: pointer; }

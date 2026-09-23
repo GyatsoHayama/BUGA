@@ -1,0 +1,77 @@
+﻿{
+    "value":  [
+                  {
+                      "id":  "custom-1790188682450",
+                      "type":  "area",
+                      "title":  "4.BUW",
+                      "description":  "Bergische UniversitÃ¤t",
+                      "applicationUrl":  "A-Frame/skl_index.html",
+                      "url":  "https://www.uni-wuppertal.de/de/",
+                      "bounds":  [
+                                     [
+                                         51.24117480497776,
+                                         7.142314910888673
+                                     ],
+                                     [
+                                         51.24839977384699,
+                                         7.1557044982910165
+                                     ]
+                                 ]
+                  },
+                  {
+                      "id":  "custom-1790189828073",
+                      "type":  "area",
+                      "title":  "1.Tesche",
+                      "description":  "1.Kernareal der Buga 2031",
+                      "applicationUrl":  "http://127.0.0.1:5500/Areale/tesche.html",
+                      "url":  "",
+                      "bounds":  [
+                                     [
+                                         51.260243371376994,
+                                         7.1645450592041025
+                                     ],
+                                     [
+                                         51.280322485124934,
+                                         7.181882858276368
+                                     ]
+                                 ]
+                  },
+                  {
+                      "id":  "custom-1790190019630",
+                      "type":  "area",
+                      "title":  "2.GrÃ¼ner Zoo",
+                      "description":  "2.Kernareal der Buga 2031",
+                      "applicationUrl":  "http://127.0.0.1:5500/Areale/gruener-zoo.html",
+                      "url":  "",
+                      "bounds":  [
+                                     [
+                                         51.234352295834434,
+                                         7.101202011108399
+                                     ],
+                                     [
+                                         51.246708407563354,
+                                         7.117938995361329
+                                     ]
+                                 ]
+                  },
+                  {
+                      "id":  "custom-1790190167925",
+                      "type":  "area",
+                      "title":  "3.Wupperforte",
+                      "description":  "3.Kernareal der BUGA 2031 wo eine hohe HÃ¤ngebrÃ¼cke entsteh der Skywalk der Ãœber Wuppertal hinweggeht",
+                      "applicationUrl":  "http://127.0.0.1:5500/Areale/wupperpforte.html",
+                      "url":  "",
+                      "bounds":  [
+                                     [
+                                         51.25439263159415,
+                                         7.185745239257813
+                                     ],
+                                     [
+                                         51.290307922797616,
+                                         7.206602096557617
+                                     ]
+                                 ]
+                  }
+              ],
+    "Count":  4
+}
