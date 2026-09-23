@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch((error) => console.warn(error));
 
-    renderSavedMarkers(map);
+    loadSavedMarkers(map);
 
     document.addEventListener("wheel", (event) => {
         if (!event.ctrlKey) return;
@@ -130,17 +130,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function renderSavedMarkers(map) {
-    let markers = [];
+async function loadSavedMarkers(map) {
+    const localMarkers = readLocalMarkers();
+    const renderedMarkerIds = new Set();
+    renderSavedMarkers(map, localMarkers, renderedMarkerIds);
+    try {
+        const response = await fetch(`includes/marker-data.json?v=${Date.now()}`);
+        if (!response.ok) throw new Error(`Projektmarker konnten nicht geladen werden: ${response.status}`);
+        const projectData = normalizeMarkers(await response.json());
+        renderSavedMarkers(map, projectData, renderedMarkerIds);
+    } catch (error) {
+        console.warn("Projektmarker konnten nicht geladen werden.", error);
+    }
+}
+
+function renderSavedMarkers(map, markers, renderedMarkerIds) {
     const areaTitleMarkers = [];
     const areaBounds = L.latLngBounds([]);
-    try {
-        markers = JSON.parse(localStorage.getItem("bugaMarkers") || "[]");
-    } catch (error) {
-        console.warn("Gespeicherte Marker konnten nicht gelesen werden.", error);
-    }
-
     markers.forEach((marker) => {
+        if (marker.id && renderedMarkerIds.has(marker.id)) return;
+        if (marker.id) renderedMarkerIds.add(marker.id);
         if (marker.type === "point" && Number.isFinite(marker.latitude) && Number.isFinite(marker.longitude)) {
             const applicationLink = marker.applicationUrl
                 ? `<a class="poi-popup-link" href="${escapeHtml(marker.applicationUrl)}">Zur Anwendung</a>`
@@ -173,22 +182,19 @@ function renderSavedMarkers(map) {
                 })
             }).addTo(map);
 
-            if (areaBounds.isValid()) {
-                requestAnimationFrame(() => {
-                    map.invalidateSize();
-                    map.fitBounds(areaBounds, {
-                        padding: [24, 24],
-                        maxZoom: 14,
-                        animate: false
-                    });
-                });
-            }
             title.on("click", (event) => {
                 L.DomEvent.stopPropagation(event);
             });
             areaTitleMarkers.push({ marker, title });
         }
     });
+
+    if (areaBounds.isValid()) {
+        requestAnimationFrame(() => {
+            map.invalidateSize();
+            map.fitBounds(areaBounds, { padding: [24, 24], maxZoom: 14, animate: false });
+        });
+    }
 
     map.on("zoomend", () => {
         areaTitleMarkers.forEach(({ marker, title }) => {
@@ -227,4 +233,19 @@ function escapeHtml(value) {
 
 function formatCoordinates(latlng) {
     return `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
+}
+
+function readLocalMarkers() {
+    try {
+        return normalizeMarkers(JSON.parse(localStorage.getItem("bugaMarkers") || "[]"));
+    } catch (error) {
+        console.warn("Gespeicherte Marker konnten nicht gelesen werden.", error);
+        return [];
+    }
+}
+
+function normalizeMarkers(data) {
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.value)) return data.value;
+    return [];
 }

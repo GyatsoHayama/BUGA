@@ -44,5 +44,5 @@ foreach ($file in $importFiles) {
     }
 }
 
-$markersById.Values | ConvertTo-Json -Depth 10 | Set-Content -Path $targetFile -Encoding UTF8
+@($markersById.Values) | ConvertTo-Json -Depth 10 | Set-Content -Path $targetFile -Encoding UTF8
 Write-Host "Markerdatei aktualisiert: $targetFile"

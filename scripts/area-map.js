@@ -7,8 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let markers = [];
     const areaTitleMarkers = [];
-    try { markers = JSON.parse(localStorage.getItem("bugaMarkers") || "[]"); } catch { return; }
-    markers.forEach((marker) => {
+    loadMarkers().then((loadedMarkers) => loadedMarkers.forEach((marker) => {
         if (marker.type === "point" && Number.isFinite(marker.latitude) && Number.isFinite(marker.longitude)) {
             L.marker([marker.latitude, marker.longitude]).addTo(map).bindPopup(`<strong>${escapeHtml(marker.title)}</strong><p>${escapeHtml(marker.description || "")}</p>`);
         }
@@ -18,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const title = L.marker(topLeft, { icon: createAreaTitleIcon(marker, map) }).addTo(map);
             areaTitleMarkers.push({ marker, title });
         }
-    });
+    }));
 
     map.on("zoomend", () => {
         areaTitleMarkers.forEach(({ marker, title }) => {
@@ -26,6 +25,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+async function loadMarkers() {
+    const localMarkers = readLocalMarkers();
+    try {
+        const response = await fetch(`../includes/marker-data.json?v=${Date.now()}`);
+        const data = await response.json();
+        const projectMarkers = Array.isArray(data) ? data : data.value || [];
+        const markersById = new Map(localMarkers.map((marker) => [marker.id, marker]));
+        projectMarkers.forEach((marker) => markersById.set(marker.id, marker));
+        return [...markersById.values()];
+    } catch {
+        return localMarkers;
+    }
+}
+
+function readLocalMarkers() {
+    try { return JSON.parse(localStorage.getItem("bugaMarkers") || "[]"); } catch { return []; }
+}
 
 function createAreaTitleIcon(marker, map) {
     return L.divIcon({
