@@ -26,12 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentLocation = null;
     let currentLocationMarker = null;
+    let currentLocationAccuracyCircle = null;
     const geolocationControl = L.control({ position: "bottomright" });
     geolocationControl.onAdd = () => {
         const element = L.DomUtil.create("button", "geolocation-control");
         element.type = "button";
         element.title = "Zum eigenen Standort springen";
-        element.textContent = "● Standort wird ermittelt ...";
+        element.innerHTML = '<span class="location-dot">●</span> Standort wird ermittelt ...';
         L.DomEvent.disableClickPropagation(element);
         element.addEventListener("click", () => {
             if (currentLocation) {
@@ -45,16 +46,26 @@ document.addEventListener("DOMContentLoaded", () => {
     map.on("locationfound", (event) => {
         currentLocation = event.latlng;
         const element = document.querySelector(".geolocation-control");
-        if (element) element.textContent = `● ${formatCoordinates(event.latlng)}`;
+        if (element) element.innerHTML = `<span class="location-dot">●</span> ${formatCoordinates(event.latlng)}`;
+
+        const accuracy = Math.max(event.accuracy || 0, 10);
+        if (!currentLocationAccuracyCircle) {
+            currentLocationAccuracyCircle = L.circle(event.latlng, {
+                radius: accuracy,
+                color: "#1976d2",
+                weight: 1,
+                fillColor: "#1976d2",
+                fillOpacity: 0.16,
+                interactive: false
+            }).addTo(map);
+        } else {
+            currentLocationAccuracyCircle
+                .setLatLng(event.latlng)
+                .setRadius(accuracy);
+        }
 
         if (!currentLocationMarker) {
-            currentLocationMarker = L.circleMarker(event.latlng, {
-                radius: 7,
-                color: "#fff",
-                weight: 2,
-                fillColor: "#1976d2",
-                fillOpacity: 1
-            }).addTo(map);
+            currentLocationMarker = L.marker(event.latlng).addTo(map);
         } else {
             currentLocationMarker.setLatLng(event.latlng);
         }
@@ -62,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     map.on("locationerror", () => {
         const element = document.querySelector(".geolocation-control");
-        if (element) element.textContent = "● Standort nicht verfügbar";
+        if (element) element.innerHTML = '<span class="location-dot">●</span> Standort nicht verfügbar';
     });
 
     map.locate({ watch: true, enableHighAccuracy: true, setView: false });
@@ -92,6 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch((error) => console.warn(error));
 
+    renderSavedMarkers(map);
+
     document.addEventListener("wheel", (event) => {
         if (!event.ctrlKey) return;
 
@@ -116,6 +129,92 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+function renderSavedMarkers(map) {
+    let markers = [];
+    const areaTitleMarkers = [];
+    const areaBounds = L.latLngBounds([]);
+    try {
+        markers = JSON.parse(localStorage.getItem("bugaMarkers") || "[]");
+    } catch (error) {
+        console.warn("Gespeicherte Marker konnten nicht gelesen werden.", error);
+    }
+
+    markers.forEach((marker) => {
+        if (marker.type === "point" && Number.isFinite(marker.latitude) && Number.isFinite(marker.longitude)) {
+            const applicationLink = marker.applicationUrl
+                ? `<a class="poi-popup-link" href="${escapeHtml(marker.applicationUrl)}">Zur Anwendung</a>`
+                : "";
+            const popupContent = `
+                <div class="poi-popup-content">
+                    <strong class="poi-popup-name">${escapeHtml(marker.title)}</strong>
+                    <p class="poi-popup-description">${escapeHtml(marker.description || "Keine Beschreibung")}</p>
+                    ${applicationLink}
+                </div>`;
+            L.marker([marker.latitude, marker.longitude]).addTo(map).bindPopup(popupContent, { className: "poi-popup" });
+        }
+
+        if (marker.type === "area" && marker.bounds) {
+            areaBounds.extend(marker.bounds);
+            const rectangle = L.rectangle(marker.bounds, {
+                color: "#8e44ad",
+                weight: 3,
+                fillColor: "#8e44ad",
+                fillOpacity: 0.12,
+                interactive: false
+            }).addTo(map);
+            const topLeft = [marker.bounds[1][0], marker.bounds[0][1]];
+            const title = L.marker(topLeft, {
+                interactive: true,
+                icon: L.divIcon({
+                    className: "area-title-marker",
+                    html: `<a class="area-title-label" href="${escapeHtml(marker.url || "#")}">${escapeHtml(getAreaTitle(marker, map))}</a>`,
+                    iconAnchor: [0, 0]
+                })
+            }).addTo(map);
+
+            if (areaBounds.isValid()) {
+                requestAnimationFrame(() => {
+                    map.invalidateSize();
+                    map.fitBounds(areaBounds, {
+                        padding: [24, 24],
+                        maxZoom: 14,
+                        animate: false
+                    });
+                });
+            }
+            title.on("click", (event) => {
+                L.DomEvent.stopPropagation(event);
+            });
+            areaTitleMarkers.push({ marker, title });
+        }
+    });
+
+    map.on("zoomend", () => {
+        areaTitleMarkers.forEach(({ marker, title }) => {
+            title.setIcon(createAreaTitleIcon(marker, map));
+        });
+    });
+}
+
+function createAreaTitleIcon(marker, map) {
+    return L.divIcon({
+        className: "area-title-marker",
+        html: `<a class="area-title-label" href="${escapeHtml(marker.url || "#")}">${escapeHtml(getAreaTitle(marker, map))}</a>`,
+        iconAnchor: [0, 0]
+    });
+}
+
+function getAreaTitle(marker, map) {
+    const title = String(marker.title || "");
+    const northWest = L.latLng(marker.bounds[1][0], marker.bounds[0][1]);
+    const northEast = L.latLng(marker.bounds[1][0], marker.bounds[1][1]);
+    const areaWidth = Math.abs(map.latLngToContainerPoint(northEast).x - map.latLngToContainerPoint(northWest).x);
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = "700 16px Arial";
+    return context.measureText(title).width + 12 > areaWidth ? title.charAt(0) : title;
+}
 
 function escapeHtml(value) {
     return String(value)

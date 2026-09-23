@@ -42,6 +42,12 @@ function getDropdownFallback() {
                     <a href="POI/skl_POI.html">POI_Dennis</a>
                 </div>
                 <div class="menu-section">
+                    <h3 class="menu-title">Areale</h3>
+                    <a href="Areale/tesche.html">Tesche</a>
+                    <a href="Areale/gruener-zoo.html">Grüner Zoo</a>
+                    <a href="Areale/wupperpforte.html">Wupperpforte</a>
+                </div>
+                <div class="menu-section">
                     <h3 class="menu-title">Protokolle</h3>
                     <a href="Sitzungsprotokolle/Protokoll.html">Sitzungs protokolle</a>
                 </div>

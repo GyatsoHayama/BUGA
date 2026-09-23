@@ -254,6 +254,15 @@ section img {
     padding: 60px 20px;
 }
 
+.editor-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 16px;
+    background: #286b39;
+    color: #fff !important;
+    text-decoration: none;
+}
+
 .map-section {
     width: 100%;
     flex: 1 1 auto;
@@ -337,6 +346,13 @@ section img {
     background: #f3f3f3;
 }
 
+.location-dot {
+    color: #1976d2;
+    font-size: 15px;
+    line-height: 1;
+    text-shadow: 0 0 0 #1976d2;
+}
+
 .geolocation-control:focus-visible {
     outline: 2px solid #1976d2;
     outline-offset: 1px;
@@ -366,6 +382,30 @@ section img {
 .poi-popup-link {
     color: #125c9e;
     text-decoration: underline;
+}
+
+.area-title-marker {
+    background: transparent;
+    border: 0;
+}
+
+.area-title-label {
+    display: inline-block;
+    width: max-content;
+    max-width: 80vw;
+    padding: 3px 6px;
+    background: #8e44ad;
+    color: #fff;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.area-title-label:visited,
+.area-title-label:hover,
+.area-title-label:active {
+    color: #fff !important;
 }
 
 .hero h1 {

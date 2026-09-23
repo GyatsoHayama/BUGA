@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/marker-editor.css">
+    <title>Marker erstellen | BUGA</title>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-group">
+                <a href="index.html" class="logo"><img src="img/Logo_Wuppertal.jpg" alt="Logo"></a>
+                <div class="logo"><h1><span>Bundesgartenschau</span><span>Wuppertal</span></h1></div>
+            </div>
+            <div id="dropdown-menu"></div>
+        </div>
+    </header>
+    <main class="editor-main">
+        <section class="editor-panel">
+            <h2>Marker erstellen</h2>
+            <p class="editor-hint">Punkte öffnen eine Info-Box. Rechtecke markieren ein Areal und lassen die Karte darunter anklickbar.</p>
+            <div class="marker-type-switch" role="group" aria-label="Markerart">
+                <button type="button" class="type-button active" data-type="point">Normaler Punkt</button>
+                <button type="button" class="type-button" data-type="area">Areal-Rechteck</button>
+            </div>
+            <form id="marker-form">
+                <label>Titel<input id="marker-title" required></label>
+                <label id="description-field">Beschreibung<textarea id="marker-description" rows="3"></textarea></label>
+                <label id="application-field">Anwendung
+                    <select id="marker-application"></select>
+                </label>
+                <label id="url-field" hidden>Hyperlink
+                    <input id="marker-url" type="url" placeholder="https://...">
+                    <select id="website-link-select" hidden aria-label="Webseite auswählen"></select>
+                </label>
+                <button type="button" id="position-button">Position auf Karte bestimmen</button>
+                <p id="position-status" class="position-status">Noch keine Position gewählt.</p>
+                <button type="submit" class="save-button">Marker speichern</button>
+            </form>
+            <div class="saved-markers">
+                <h3>Gespeicherte Marker</h3>
+                <ul id="saved-marker-list"></ul>
+            </div>
+        </section>
+        <section class="editor-map-section"><div id="editor-map"></div></section>
+    </main>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="scripts/dropdown.js"></script>
+    <script src="scripts/marker-editor.js?v=6"></script>
+</body>
+</html>
