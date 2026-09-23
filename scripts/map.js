@@ -24,6 +24,28 @@ document.addEventListener("DOMContentLoaded", () => {
         new ResizeObserver(() => map.invalidateSize()).observe(mapElement);
     }
 
+    const geolocationControl = L.control({ position: "bottomleft" });
+    geolocationControl.onAdd = () => {
+        const element = L.DomUtil.create("div", "geolocation-control");
+        element.textContent = "Standort wird ermittelt ...";
+        return element;
+    };
+    geolocationControl.addTo(map);
+
+    map.on("locationfound", (event) => {
+        const element = document.querySelector(".geolocation-control");
+        if (!element) return;
+
+        element.textContent = `Standort: ${event.latlng.lat.toFixed(5)}, ${event.latlng.lng.toFixed(5)}`;
+    });
+
+    map.on("locationerror", () => {
+        const element = document.querySelector(".geolocation-control");
+        if (element) element.textContent = "Standort nicht verfügbar";
+    });
+
+    map.locate({ watch: true, enableHighAccuracy: true, setView: false });
+
     fetch("POI/POI2/pois.json")
         .then((response) => {
             if (!response.ok) throw new Error(`POIs konnten nicht geladen werden: ${response.status}`);
