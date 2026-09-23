@@ -33,9 +33,17 @@ document.addEventListener("DOMContentLoaded", () => {
             pois.forEach((poi) => {
                 if (!Number.isFinite(poi.latitude) || !Number.isFinite(poi.longitude)) return;
 
+                const applicationUrl = poi.applicationUrl || "POI/POI2/index.html";
+                const popupContent = `
+                    <div class="poi-popup-content">
+                        <strong class="poi-popup-name">${escapeHtml(poi.name)}</strong>
+                        <p class="poi-popup-description">${escapeHtml(poi.description || "Keine Beschreibung")}</p>
+                        <a class="poi-popup-link" href="${escapeHtml(applicationUrl)}">Zur Anwendung</a>
+                    </div>`;
+
                 L.marker([poi.latitude, poi.longitude])
                     .addTo(map)
-                    .bindPopup(`<strong>${escapeHtml(poi.name)}</strong><br>${escapeHtml(poi.description || "Keine Beschreibung")}`);
+                    .bindPopup(popupContent, { className: "poi-popup" });
             });
         })
         .catch((error) => console.warn(error));

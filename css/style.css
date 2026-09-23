@@ -271,6 +271,35 @@ section img {
     font: inherit;
 }
 
+.poi-popup .leaflet-popup-content-wrapper {
+    background: #fff;
+    color: #333;
+}
+
+.poi-popup .leaflet-popup-tip {
+    background: #fff;
+}
+
+.poi-popup .leaflet-popup-content {
+    margin: 14px 16px;
+    min-width: 190px;
+}
+
+.poi-popup-name {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.poi-popup-description {
+    margin: 0 0 10px;
+}
+
+.poi-popup-link {
+    color: #125c9e;
+    text-decoration: underline;
+}
+
 .hero h1 {
     font-size: 48px;
 
