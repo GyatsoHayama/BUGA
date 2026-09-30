@@ -7,11 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("marker-form");
     const typeButtons = document.querySelectorAll(".type-button");
+    const typeSwitch = document.getElementById("marker-type-switch");
+    const applicationSelect = document.getElementById("marker-application");
+    const applicationHint = document.getElementById("application-hint");
+    const poiFields = document.getElementById("poi-fields");
+    const categoryInput = document.getElementById("marker-category");
+    const iconSelect = document.getElementById("marker-icon");
+    const titleInput = document.getElementById("marker-title");
+    const descriptionInput = document.getElementById("marker-description");
+    const markerUrlInput = document.getElementById("marker-url");
+    const urlField = document.getElementById("url-field");
+    const urlLabel = document.getElementById("url-label");
     const positionButton = document.getElementById("position-button");
     const status = document.getElementById("position-status");
-    const applicationSelect = document.getElementById("marker-application");
-    const markerUrlInput = document.getElementById("marker-url");
-    const websiteLinkSelect = document.getElementById("website-link-select");
     const saveToProject = document.getElementById("save-to-project");
     const savedList = document.getElementById("saved-marker-list");
     let markerType = "point";
@@ -21,29 +29,29 @@ document.addEventListener("DOMContentLoaded", () => {
     let preview = null;
     let editingMarkerId = null;
     const saveButton = form.querySelector(".save-button");
-    const websiteApplication = "__website__";
+    const applicationUrls = {
+        poi: "POI/skl_POI.html",
+        murals: "Murals/skl_Murals_Marcel.html",
+        marker: "A-Frame/skl_Marker_L.html"
+    };
+    const applicationNames = {
+        individual: "Individueller Punkt",
+        poi: "POI",
+        murals: "Murals",
+        marker: "A-Frame-Marker"
+    };
 
-    applicationSelect.add(new Option("Keine Verknüpfung", ""));
-    [
-        ["POI-Anwendung", "POI/POI2/index.html"],
-        ["Marker-Anwendung", "A-Frame/skl_index.html"],
-        ["Webseite erstellen", websiteApplication],
-        ["Eigene Adresse", "https://example.com"]
-    ].forEach(([label, value]) => applicationSelect.add(new Option(label, value)));
-
-    loadWebsiteLinks();
+    updateApplicationFields(false);
 
     typeButtons.forEach((button) => button.addEventListener("click", () => {
-        markerType = button.dataset.type;
-        typeButtons.forEach((item) => item.classList.toggle("active", item === button));
-        document.getElementById("description-field").hidden = markerType === "area";
-        document.getElementById("application-field").hidden = false;
-        applicationSelect.required = false;
-        updateWebsiteField();
+        if (applicationSelect.value !== "individual") return;
+        setMarkerType(button.dataset.type);
         resetPosition();
     }));
 
-    applicationSelect.addEventListener("change", updateWebsiteField);
+    applicationSelect.addEventListener("change", () => {
+        updateApplicationFields();
+    });
 
     positionButton.addEventListener("click", () => {
         resetPosition(false);
@@ -88,16 +96,21 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         if (!selectedPosition) { status.textContent = "Bitte zuerst die Position auf der Karte bestimmen."; return; }
         const markers = readMarkers();
+        const applicationType = applicationSelect.value;
+        const exportForImport = saveToProject.checked;
         const markerData = {
             type: markerType,
-            title: document.getElementById("marker-title").value.trim(),
-            description: document.getElementById("marker-description").value.trim(),
-            applicationUrl: applicationSelect.value === websiteApplication
-                ? websiteLinkSelect.value
-                : markerType === "point" ? applicationSelect.value : "",
-            url: markerUrlInput.value.trim(),
+            applicationType,
+            title: titleInput.value.trim(),
+            description: descriptionInput.value.trim(),
+            applicationUrl: applicationUrls[applicationType] || markerUrlInput.value.trim(),
+            url: markerType === "area" ? markerUrlInput.value.trim() : "",
             ...selectedPosition
         };
+        if (applicationType === "poi") {
+            markerData.category = categoryInput.value.trim() || "poi";
+            markerData.icon = iconSelect.value;
+        }
         if (editingMarkerId) {
             const markerIndex = markers.findIndex((marker) => marker.id === editingMarkerId);
             if (markerIndex !== -1) markers[markerIndex] = { ...markers[markerIndex], ...markerData };
@@ -105,14 +118,17 @@ document.addEventListener("DOMContentLoaded", () => {
             markers.push({ id: `custom-${Date.now()}`, ...markerData });
         }
         localStorage.setItem("bugaMarkers", JSON.stringify(markers));
-        if (saveToProject.checked) downloadProjectMarkers(markers);
+        if (exportForImport) downloadProjectMarkers(markers);
         editingMarkerId = null;
         form.reset();
+        setMarkerType("point");
+        updateApplicationFields(false);
         resetPosition();
-        updateWebsiteField();
         saveButton.textContent = "Marker speichern";
         renderSavedMarkers();
-        status.textContent = "Marker gespeichert.";
+        status.textContent = exportForImport
+            ? "Marker gespeichert und für den Import exportiert."
+            : "Marker gespeichert.";
     });
 
     function resetPosition(clear = true) {
@@ -123,6 +139,32 @@ document.addEventListener("DOMContentLoaded", () => {
         map.getContainer().classList.remove("is-positioning");
         if (clear) selectedPosition = null;
         status.textContent = "Noch keine Position gewählt.";
+    }
+
+    function setMarkerType(type) {
+        markerType = type;
+        typeButtons.forEach((button) => button.classList.toggle("active", button.dataset.type === type));
+        urlLabel.textContent = type === "area" ? "Link für das Areal (optional)" : "Externer Link (optional)";
+    }
+
+    function updateApplicationFields(resetPositionSelection = true) {
+        const applicationType = applicationSelect.value;
+        const isIndividual = applicationType === "individual";
+        const isPoi = applicationType === "poi";
+
+        typeSwitch.hidden = !isIndividual;
+        poiFields.hidden = !isPoi;
+        urlField.hidden = !isIndividual;
+        categoryInput.required = isPoi;
+        applicationHint.hidden = isIndividual;
+        applicationHint.textContent = isPoi
+            ? "Der POI wird in die Daten der POI-Anwendung importiert."
+            : applicationType === "murals"
+                ? "Der Kartenpunkt verlinkt zur Murals-Anwendung."
+                : "Der Kartenpunkt verlinkt zur A-Frame-Marker-Anwendung.";
+
+        if (!isIndividual) setMarkerType("point");
+        if (resetPositionSelection) resetPosition();
     }
 
     function readMarkers() {
@@ -146,7 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
         readMarkers().forEach((marker) => {
             const item = document.createElement("li");
             const label = document.createElement("span");
-            label.textContent = `${marker.title} (${marker.type === "area" ? "Areal" : "Punkt"})`;
+            const markerKind = marker.type === "area" ? "Areal" : applicationNames[marker.applicationType || "individual"];
+            label.textContent = `${marker.title} (${markerKind})`;
             label.className = "saved-marker-label";
             label.title = "Marker bearbeiten";
             label.addEventListener("click", () => loadMarkerForEditing(marker));
@@ -167,48 +210,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function loadMarkerForEditing(marker) {
         editingMarkerId = marker.id;
-        const typeButton = [...typeButtons].find((button) => button.dataset.type === marker.type);
-        if (typeButton) typeButton.click();
-        document.getElementById("marker-title").value = marker.title || "";
-        document.getElementById("marker-description").value = marker.description || "";
-        const savedUrl = marker.type === "area" ? marker.url : marker.applicationUrl;
-        const websiteLink = [...websiteLinkSelect.options].some((option) => option.value === savedUrl);
-        applicationSelect.value = websiteLink ? websiteApplication : marker.applicationUrl || "";
-        websiteLinkSelect.value = websiteLink ? savedUrl : "";
-        markerUrlInput.value = marker.url || "";
-        updateWebsiteField();
+        applicationSelect.value = marker.applicationType || "individual";
+        markerType = marker.type === "area" && applicationSelect.value === "individual" ? "area" : "point";
+        typeButtons.forEach((button) => button.classList.toggle("active", button.dataset.type === markerType));
+        updateApplicationFields(false);
+        titleInput.value = marker.title || "";
+        descriptionInput.value = marker.description || "";
+        categoryInput.value = marker.category || "test";
+        iconSelect.value = marker.icon || "default";
+        markerUrlInput.value = applicationSelect.value === "individual"
+            ? marker.type === "area" ? marker.url || "" : marker.applicationUrl || ""
+            : "";
         selectedPosition = marker.type === "area"
             ? { bounds: marker.bounds }
             : { latitude: marker.latitude, longitude: marker.longitude };
         saveButton.textContent = "Änderungen speichern";
         status.textContent = "Marker geladen. Du kannst ihn jetzt überarbeiten.";
-    }
-
-    function updateWebsiteField() {
-        const isWebsiteSelection = applicationSelect.value === websiteApplication;
-        const isArea = markerType === "area";
-        document.getElementById("url-field").hidden = !isWebsiteSelection && !isArea;
-        markerUrlInput.hidden = isWebsiteSelection;
-        websiteLinkSelect.hidden = !isWebsiteSelection;
-        markerUrlInput.required = isArea && !isWebsiteSelection;
-        websiteLinkSelect.required = isWebsiteSelection;
-    }
-
-    async function loadWebsiteLinks() {
-        try {
-            const response = await fetch("includes/dropdown.html");
-            if (!response.ok) throw new Error(`Dropdown konnte nicht geladen werden: ${response.status}`);
-            const dropdownMarkup = await response.text();
-            const dropdown = document.createElement("div");
-            dropdown.innerHTML = dropdownMarkup;
-            websiteLinkSelect.replaceChildren(new Option("Webseite auswählen", ""));
-            dropdown.querySelectorAll("a[href]").forEach((link) => {
-                const url = new URL(link.getAttribute("href"), document.baseURI).href;
-                websiteLinkSelect.add(new Option(link.textContent.trim(), url));
-            });
-        } catch (error) {
-            console.warn("Webseiten-Links konnten nicht geladen werden.", error);
-        }
     }
 
     renderSavedMarkers();

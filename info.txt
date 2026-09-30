@@ -1,0 +1,146 @@
+Anwendung: Aufbau und Pflege
+
+1. Projektstruktur
+Die Website ist eine statische Webanwendung. HTML-Dateien bilden die Seiten; JavaScript und CSS ergänzen Funktionen und Gestaltung.
+
+- Die Hauptseiten wie index.html, ueber-uns.html und impressum.html liegen im Projektstamm.
+- Areale/ enthält die drei Gebietseiten.
+- A-Frame/, POI/ und Murals/ enthalten Anwendungsseiten und eingebundene Teilprojekte.
+- Sitzungsprotokolle/ enthält die Protokolle im Markdown-Format sowie protocols.json als Dateiliste.
+- css/ enthält gemeinsame Styles und zusätzliche Stylesheets für einzelne Bereiche.
+- scripts/ enthält die Karten-, Menü-, Protokoll- und Editorlogik.
+- includes/ enthält gemeinsame Bausteine und Daten: dropdown.html, skeleton.html, marker-editor.html und marker-data.json. Dort liegen auch die Importskripte.
+- img/ enthält verwendete Bilder.
+
+POI/POI2, Murals/mindar-murals-tour und A-Frame/Marker-App-Bsp sind Git-Submodule. Beim Klonen müssen sie mit abgerufen werden:
+
+	git clone --recurse-submodules https://github.com/GyatsoHayama/BUGA.git
+
+Für ein bereits geklontes Repository können fehlende Submodule so initialisiert werden:
+
+	git submodule update --init --recursive
+
+2. Hauptanwendung
+
+2.1 Startseite
+index.html ist der Einstiegspunkt. Sie enthält den gemeinsamen Header, das Dropdown-Menü, die interaktive Leaflet-Karte und den Footer. Die Karte lädt POIs aus POI/POI2/pois.json sowie individuelle Punkt- und Arealmarker aus includes/marker-data.json. Der Browser kann außerdem den Gerätestandort abfragen; dafür ist eine Standortfreigabe erforderlich.
+
+Der Link „Marker erstellen“ befindet sich auf der Startseite und öffnet includes/marker-editor.html.
+
+2.2 Informationsseiten
+impressum.html enthält das Impressum. ueber-uns.html enthält die Seite „Über Uns“.
+
+2.3 Arealseiten
+Areale/tesche.html, Areale/gruener-zoo.html und Areale/wupperpforte.html zeigen jeweils die Karte des Gebiets und die darin liegenden POIs. Der Kartenausschnitt und die POI-Auswahl richten sich nach den Grenzen des jeweiligen Arealmarkers.
+
+2.4 Sitzungsprotokolle
+Sitzungsprotokolle/Protokoll.html lädt die Dateiliste aus Sitzungsprotokolle/protocols.json und zeigt ein ausgewähltes Markdown-Protokoll im Viewer an.
+
+3. Nebenanwendungen und gemeinsame Funktionen
+
+3.1 Gemeinsame Grundlage
+includes/ enthält gemeinsam verwendete HTML-Bausteine, Markerdateien und Importwerkzeuge. Die Funktionen liegen verteilt in includes/ und scripts/; das Dropdown wird zum Beispiel aus includes/dropdown.html geladen und mit scripts/dropdown.js bedient.
+
+3.2 Dropdown-Menü
+includes/dropdown.html stellt den Inhalt des Menüs bereit. Jede menu-section bildet einen ausklappbaren Bereich. Der Titel ist ein Button; darunter stehen die Links zu den Seiten:
+
+	<div class="menu-section">
+		<button class="menu-title" type="button" aria-expanded="false">Bereichsname</button>
+		<a href="pfad/zur-seite.html">Name der Unterseite</a>
+	</div>
+
+Beim Hinzufügen eines Eintrags müssen Titel und href angepasst werden. Die Menülogik steht in scripts/dropdown.js.
+
+3.3 Skeleton-Seite
+includes/skeleton.html ist eine Vorlage für neue Seiten mit Header, Menübereich, Main-Bereich, Footer und Dropdown-Script. Die Vorlage wird manuell kopiert und an den Inhalt der neuen Seite angepasst; sie erzeugt Seiten nicht automatisch. Die vorhandenen skl_*.html-Dateien sind Wrapper, die ältere oder eigenständige Anwendungen teilweise in einem iframe einbinden.
+
+Beispiel für einen eingebundenen Inhalt:
+
+	<main>
+		<iframe src="pfad/zum-inhalt.html" title="Eingebundene Anwendung"></iframe>
+	</main>
+
+Beim Kopieren ist der relative Basispfad der Vorlage zu prüfen: includes/skeleton.html verwendet <base href="../">, was für Seiten in einem direkten Unterordner passt. Liegt die neue Seite an einem anderen Ort, müssen Basispfad und Ressourcenpfade angepasst werden.
+
+3.4 Marker erstellen und importieren
+Der Editor liegt in includes/marker-editor.html. Die Anwendung wird zuerst gewählt:
+
+- Individueller Punkt: Punkt oder Arealrechteck; Export nach includes/marker-data.json.
+- POI: zusätzliche Felder für Kategorie und Symbol; Import nach POI/POI2/pois.json.
+- Murals und A-Frame-Marker: Punktmarker in includes/marker-data.json mit festem Link zur jeweiligen Anwendung.
+
+Der Editor speichert Änderungen zunächst im localStorage des aktuellen Browsers. Für die gemeinsame Projektdatei muss „Markerdatei zum Import exportieren“ aktiviert werden. Die heruntergeladene JSON-Datei wird in includes/markerimport/ abgelegt. Anschließend wird includes/import-markers.bat gestartet. Das PowerShell-Script importiert die Einträge anhand ihres Anwendungstyps in die passenden JSON-Dateien. Erfolgreich verarbeitete Importdateien werden gelöscht. Eine statisch gehostete Website kann die Projektdateien nicht selbst auf dem Server überschreiben.
+
+3.5 Protokollliste aktualisieren
+Die Seite lädt die Dateinamen aus Sitzungsprotokolle/protocols.json. Nach dem Hinzufügen oder Entfernen von Markdown-Dateien muss die Liste neu erzeugt werden:
+
+	node scripts/generate-protocol-list.js
+
+Die Liste wird beim Seitenaufruf aus der JSON-Datei geladen; der Browser durchsucht den Ordner nicht selbst.
+
+3.6 Verbesserungsvorschläge
+- Die Verteilung und Formate der Markerdateien in einer kleinen Datendokumentation festhalten; besonders die Trennung zwischen marker-data.json und pois.json.
+- Vor dem Import eine Sicherung der Zieldateien erstellen und Importfehler sichtbar protokollieren. Erfolgreiche Dateien werden derzeit gelöscht.
+- Bei Arealmarkern prüfen, ob die POI-Koordinaten innerhalb der gespeicherten Grenzen liegen; außerhalb liegende POIs erscheinen nicht auf der Arealseite.
+- Die Skeleton-Vorlage um einen kurzen Hinweis zur Anpassung des Basispfads ergänzen und neue Seiten möglichst einheitlich daraus ableiten.
+- Veraltete lokale URLs wie 127.0.0.1:5500 aus Projekt- und Markerdateien entfernen, bevor Änderungen veröffentlicht werden.
+- Die Submodule und deren Zuständigkeiten dokumentieren, damit beim Klonen und Aktualisieren keine Teilanwendung fehlt.
+
+4. GitHub und GitLab
+
+4.1 GitHub
+Das lokale Repository ist mit https://github.com/GyatsoHayama/BUGA.git als origin verbunden. Der aktive Branch ist main.
+
+4.1.1 Repository verbinden und Berechtigungen
+Für einen neuen Klon:
+
+	git clone --recurse-submodules https://github.com/GyatsoHayama/BUGA.git
+
+Bei einem vorhandenen Arbeitsordner zuerst das Remote prüfen:
+
+	git remote -v
+
+Ein Remote wird nur hinzugefügt, wenn noch keines mit diesem Namen existiert:
+
+	git remote add origin https://github.com/GyatsoHayama/BUGA.git
+
+Zugriff erhalten Personen über die Einstellungen des GitHub-Repositories, zum Beispiel als Collaborator oder über ein Team. Ob ein Nutzer pushen darf, hängt von der zugewiesenen Rolle ab. Zugangstoken oder Passwörter gehören nicht in dieses Dokument oder in Git-Dateien.
+
+4.1.2 Änderungen synchronisieren
+Vor der Arbeit lokale Änderungen prüfen und den Branch aktualisieren:
+
+	git status
+	git switch main
+	git pull --rebase origin main
+
+Änderungen anschließend gezielt stagen, committen und übertragen:
+
+	git add <Dateien>
+	git commit -m "Änderung kurz beschreiben"
+	git push origin main
+
+Bei Merge-Konflikten müssen die betroffenen Dateien zuerst geprüft und bereinigt werden. Nicht mit force push überschreiben, wenn unklar ist, ob dadurch Beiträge anderer verloren gehen.
+
+4.1.3 GitHub Pages
+GitHub Pages veröffentlicht die statischen HTML-, CSS-, JavaScript- und Datendateien. Die Website wird nach einem Push automatisch aktualisiert, sofern Pages für das Repository eingerichtet ist. Die konkrete Quelle ist in GitHub unter Settings > Pages zu prüfen. Bei einer Branch-Veröffentlichung müssen Branch und Ordner korrekt ausgewählt sein; dieses Repository enthält keine GitHub-Actions-Workflowdatei, die die Pages-Veröffentlichung festlegt.
+
+4.2 GitLab
+Die README.md enthält noch eine frühere GitLab-Projektadresse: https://gitlab-ce.hs-bochum.de/fachbereich-geodaesie/gi-projekte/ar-gartenschau-app.git. Das aktuelle lokale origin zeigt jedoch auf GitHub. Vor einer Synchronisierung mit GitLab muss daher geklärt werden, welches Repository maßgeblich ist und ob Schreibrechte bestehen.
+
+4.2.1 GitLab-Remote
+Soll GitLab zusätzlich verwendet werden, kann es unter einem eigenen Namen eingetragen werden, damit origin auf GitHub erhalten bleibt:
+
+	git remote add gitlab https://gitlab-ce.hs-bochum.de/fachbereich-geodaesie/gi-projekte/ar-gartenschau-app.git
+	git remote -v
+
+Die Gruppenadministration muss den Nutzer dem GitLab-Projekt mit passenden Rechten hinzufügen. Zugangsdaten werden über Git Credential Manager oder den vorgesehenen Anmeldeweg verwaltet, nicht im Klartext in der URL gespeichert.
+
+4.2.2 Push, Pull und Pages
+GitLab verwendet dieselben Git-Grundbefehle, aber mit dem Remote-Namen gitlab, zum Beispiel git pull gitlab main oder git push gitlab main. Änderungen sollten nicht unabhängig auf beiden Plattformen bearbeitet werden; sonst können die Branches auseinanderlaufen. Vor dem Push müssen gemeinsame Historie, Zielbranch und Zugriffsrechte geprüft werden.
+
+Im Projektstamm ist keine GitLab-Pages-Pipeline vorhanden. A-Frame/.gitlab-ci.yml betrifft nur das dortige Teilprojekt und ist keine Konfiguration für die Veröffentlichung der gesamten Website.
+
+
+
+
+

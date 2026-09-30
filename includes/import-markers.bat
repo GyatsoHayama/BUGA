@@ -9,4 +9,6 @@ if errorlevel 1 (
 )
 
 echo Import abgeschlossen.
+echo Individuelle, Murals- und A-Frame-Punkte: includes\marker-data.json
+echo POI-Anwendung: POI\POI2\pois.json
 pause

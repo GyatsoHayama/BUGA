@@ -78,16 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     map.locate({ watch: true, enableHighAccuracy: true, setView: false });
 
-    fetch("POI/POI2/pois.json")
+    const poiDataPromise = fetch("POI/POI2/pois.json")
         .then((response) => {
             if (!response.ok) throw new Error(`POIs konnten nicht geladen werden: ${response.status}`);
             return response.json();
         })
         .then((pois) => {
+            const poiIds = new Set();
             pois.forEach((poi) => {
                 if (!Number.isFinite(poi.latitude) || !Number.isFinite(poi.longitude)) return;
+                if (poi.id) poiIds.add(String(poi.id));
 
-                const applicationUrl = poi.applicationUrl || "POI/POI2/index.html";
+                const applicationUrl = poi.applicationUrl || "POI/skl_POI.html";
                 const popupContent = `
                     <div class="poi-popup-content" style="background:#ffffff; color:#333333; opacity:1;">
                         <strong class="poi-popup-name">${escapeHtml(poi.name)}</strong>
@@ -100,10 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     .addTo(map)
                     .bindPopup(popupContent, { className: "poi-popup" });
             });
+            return poiIds;
         })
-        .catch((error) => console.warn(error));
+        .catch((error) => {
+            console.warn(error);
+            return new Set();
+        });
 
-    loadSavedMarkers(map);
+    loadSavedMarkers(map, poiDataPromise);
 
     document.addEventListener("wheel", (event) => {
         if (!event.ctrlKey) return;
@@ -130,24 +136,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-async function loadSavedMarkers(map) {
+async function loadSavedMarkers(map, poiDataPromise) {
+    const importedPoiIds = await poiDataPromise;
     const localMarkers = readLocalMarkers();
     const renderedMarkerIds = new Set();
-    renderSavedMarkers(map, localMarkers, renderedMarkerIds);
+    renderSavedMarkers(map, localMarkers, renderedMarkerIds, importedPoiIds);
     try {
         const response = await fetch(`includes/marker-data.json?v=${Date.now()}`);
         if (!response.ok) throw new Error(`Projektmarker konnten nicht geladen werden: ${response.status}`);
         const projectData = normalizeMarkers(await response.json());
-        renderSavedMarkers(map, projectData, renderedMarkerIds);
+        renderSavedMarkers(map, projectData, renderedMarkerIds, importedPoiIds);
     } catch (error) {
         console.warn("Projektmarker konnten nicht geladen werden.", error);
     }
 }
 
-function renderSavedMarkers(map, markers, renderedMarkerIds) {
+function renderSavedMarkers(map, markers, renderedMarkerIds, importedPoiIds) {
     const areaTitleMarkers = [];
     const areaBounds = L.latLngBounds([]);
     markers.forEach((marker) => {
+        if (marker.applicationType === "poi" && importedPoiIds.has(String(marker.id))) return;
         if (marker.id && renderedMarkerIds.has(marker.id)) return;
         if (marker.id) renderedMarkerIds.add(marker.id);
         if (marker.type === "point" && Number.isFinite(marker.latitude) && Number.isFinite(marker.longitude)) {
