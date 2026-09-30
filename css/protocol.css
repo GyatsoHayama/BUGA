@@ -9,8 +9,8 @@
 
         .protocol-selector,
         .protocol-viewer {
-            background: #ffffff;
-            border: 1px solid #d3d3d3;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
             border-radius: 10px;
             padding: 1rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -28,20 +28,20 @@
             margin-top: 0.5rem;
             padding: 0.8rem;
             font-size: 1rem;
-            border: 1px solid #b3b3b3;
+            border: 1px solid var(--color-input-border);
             border-radius: 6px;
-            background: #fafafa;
+            background: var(--color-input-background);
         }
 
         .protocol-selector button {
-            background: #2e6bff;
-            color: #fff;
+            background: var(--color-brand);
+            color: var(--color-on-brand);
             border-color: transparent;
             cursor: pointer;
         }
 
         .protocol-selector button:hover {
-            background: #2458d5;
+            background: var(--color-brand-hover);
         }
 
         .protocol-viewer {
@@ -51,7 +51,7 @@
         .protocol-meta {
             margin-bottom: 1rem;
             font-size: 0.95rem;
-            color: #333;
+            color: var(--color-text);
         }
 
         .markdown-content h1,
@@ -75,7 +75,7 @@
         }
 
         .markdown-content a {
-            color: #2e6bff;
+            color: var(--color-brand);
             text-decoration: none;
         }
 
