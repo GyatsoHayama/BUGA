@@ -78,6 +78,7 @@
 }
 .area-poi-button:hover,
 .area-poi-button:focus-visible { color: var(--color-brand-hover); text-decoration: underline; }
+.area-poi-description { margin: 0 0 12px; color: var(--color-text); line-height: 1.5; }
 .area-poi-empty { margin-top: 12px; color: var(--color-text-subtle); }
 @media (max-width: 720px) {
     .editor-main { grid-template-columns: 1fr; overflow-y: auto; }

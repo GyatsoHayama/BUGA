@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mapElement = document.getElementById("area-map");
     if (!mapElement) return;
 
-    const map = L.map(mapElement);
+    const map = L.map(mapElement, { maxBoundsViscosity: 1 });
     L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
@@ -11,7 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAreaData(mapElement.dataset.areaId)
         .then(({ area, pois }) => {
             const bounds = L.latLngBounds(area.bounds);
-            map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16 });
+            const mapBounds = bounds.pad(0.12);
+            map.fitBounds(mapBounds, { padding: [12, 12], maxZoom: 16 });
+            map.setMinZoom(map.getZoom());
+            map.setMaxBounds(mapBounds);
             L.rectangle(bounds, {
                 color: "#286b39",
                 weight: 2,
@@ -119,31 +122,49 @@ function renderPois(pois, map) {
     list.replaceChildren();
     count.textContent = `${pois.length} ${pois.length === 1 ? "POI" : "POIs"}`;
     emptyMessage.hidden = pois.length > 0;
+    let openDescription = null;
+    let openButton = null;
+
+    function toggleDescription(item, description, button) {
+        if (openDescription && openDescription !== description) {
+            openDescription.hidden = true;
+            openButton.setAttribute("aria-expanded", "false");
+        }
+
+        const shouldOpen = description.hidden;
+        description.hidden = !shouldOpen;
+        button.setAttribute("aria-expanded", String(shouldOpen));
+
+        if (shouldOpen) {
+            openDescription = description;
+            openButton = button;
+            item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else {
+            openDescription = null;
+            openButton = null;
+        }
+    }
 
     pois.forEach((poi) => {
         const marker = L.marker([poi.latitude, poi.longitude]).addTo(map);
-        marker.bindPopup(`<strong>${escapeHtml(poi.name || "POI")}</strong><p>${escapeHtml(poi.description || "")}</p>`);
 
         const item = document.createElement("li");
         const button = document.createElement("button");
         button.type = "button";
         button.className = "area-poi-button";
         button.textContent = poi.name || "Unbenannter POI";
-        button.setAttribute("aria-label", `Karte auf ${button.textContent} zentrieren`);
-        button.addEventListener("click", () => {
-            map.panTo(marker.getLatLng());
-            marker.openPopup();
-        });
-        item.append(button);
+        button.setAttribute("aria-expanded", "false");
+        button.setAttribute("aria-label", `Beschreibung zu ${button.textContent} anzeigen`);
+
+        const description = document.createElement("p");
+        description.className = "area-poi-description";
+        description.textContent = poi.description || "Keine Beschreibung hinterlegt.";
+        description.hidden = true;
+
+        const toggle = () => toggleDescription(item, description, button);
+        button.addEventListener("click", toggle);
+        marker.on("click", toggle);
+        item.append(button, description);
         list.append(item);
     });
-}
-
-function escapeHtml(value) {
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
 }

@@ -1,24 +1,6 @@
 ﻿{
     "value":  [
                   {
-                      "id":  "custom-1790188682450",
-                      "type":  "area",
-                      "title":  "4.BUW",
-                      "description":  "Bergische UniversitÃ¤t",
-                      "applicationUrl":  "A-Frame/skl_index.html",
-                      "url":  "https://www.uni-wuppertal.de/de/",
-                      "bounds":  [
-                                     [
-                                         51.24117480497776,
-                                         7.142314910888673
-                                     ],
-                                     [
-                                         51.24839977384699,
-                                         7.1557044982910165
-                                     ]
-                                 ]
-                  },
-                  {
                       "id":  "custom-1790189828073",
                       "type":  "area",
                       "title":  "1.Tesche",
